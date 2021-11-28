@@ -1,0 +1,54 @@
+
+			body {
+				color: #CCC;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				font-weight: bold;
+
+				background-color: #333;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				color:#CCC;
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+
+			}
+
+      #infoFooter{
+        color:#CCC;
+				position: absolute;
+				bottom: 0px; width: 100%;
+				padding: 5px;
+      }
+
+			a {
+				color: #FAA;
+        text-decoration: none;
+			}
+
+      .noselect {
+        /*pointer-events: none;*/
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Chrome/Safari/Opera */
+        -khtml-user-select: none; /* Konqueror */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently
+                                  not supported by any browser */
+      }
+
+      .logoCorner{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 48px;
+        margin: 5px;
+      }
+      .logoCorner:hover{
+        filter: invert(100%);
+      }
