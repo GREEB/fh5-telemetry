@@ -6,8 +6,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config webpack.config.prod.js",
-    "start": "webpack serve --config webpack.config.dev.js --hot"
+    "build": "webpack --config webpack.config.prod.cjs",
+    "start": "webpack serve --config webpack.config.dev.cjs --hot"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
@@ -32,6 +32,7 @@
   "dependencies": {
     "@babel/runtime": "^7.14.0",
     "cors": "^2.8.5",
+    "dat.gui": "^0.7.7",
     "dotenv": "^10.0.0",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",

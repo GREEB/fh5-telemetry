@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
+import * as dat from 'dat.gui';
 import Papa from 'papaparse'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import './style.css';
@@ -21,7 +21,7 @@ let box = null;
 
 // letiable managed by DAT.GUI
 let guilet = null;
-let gui = new GUI();
+let gui = new dat.GUI();
 let guiControllers = {};
 
 let raycaster = new THREE.Raycaster();
