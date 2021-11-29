@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import dotenv from 'dotenv'
 dotenv.config()
 import throttle from 'lodash.throttle'
