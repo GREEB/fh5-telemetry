@@ -168,15 +168,15 @@ if (process.env.PROD){
         key: fs.readFileSync('/etc/letsencrypt/live/' + process.env.URL + '/privkey.pem'),
         cert: fs.readFileSync('/etc/letsencrypt/live/' + process.env.URL + '/fullchain.pem'),
       }, webServer);
-      httpsServer.listen(process.env.PRODPORT, () => {
-          console.log('HTTPS Server running on port 9443');
+      httpsServer.listen(process.env.SSLPORT, () => {
+          console.log('HTTPS Server running on port ' + process.env.SSLPORT);
       });
     }
 
 webServer.use(express.static(path.join(__dirname + '/build')));
 const httpServer = http.createServer(webServer);
-httpServer.listen(process.env.DEVPORT, () => {
-    console.log('HTTP Server running on port 9980');
+httpServer.listen(process.env.HTTPPORT, () => {
+    console.log('HTTP Server running on port ' +  process.env.HTTPPORT);
 });
 
 
