@@ -4,8 +4,15 @@ import throttle from 'lodash.throttle'
 import dgram from 'dgram';
 import mongoose from 'mongoose'
 import * as fs from 'fs';
-import express from 'express';
 import path from 'path';
+
+import express from 'express';
+import cors from 'cors';
+
+import http from 'http'
+import https from 'https'
+
+
 const __dirname = path.resolve()
 
 // Servers 8080 and 5300
@@ -154,14 +161,33 @@ setInterval(() => {
     });
 }, 2500);
 
+// Listen both http & https ports
+
+if (process.env.PROD){
+    const httpsServer = https.createServer({
+        key: fs.readFileSync('/etc/letsencrypt/live/' + process.env.URL + '/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/' + process.env.URL + 'fullchain.pem'),
+      }, webServer);
+      httpsServer.listen(99443, () => {
+          console.log('HTTPS Server running on port 99443');
+      });
+    }
+
 webServer.use(express.static(path.join(__dirname + '/build')));
-
-webServer.listen(8080, () => console.log('WebServer listening on  0.0.0.0:8080'));
-
-webServer.on('error', (err) => {
-    console.log(`webServer error:\n${err.stack}`);
-    webServer.close();
+const httpServer = http.createServer(webServer);
+httpServer.listen(9980, () => {
+    console.log('HTTP Server running on port 9980');
 });
+
+
+
+
+// webServer.listen(8080, () => console.log('WebServer listening on  0.0.0.0:8080'));
+
+// webServer.on('error', (err) => {
+//     console.log(`webServer error:\n${err.stack}`);
+//     webServer.close();
+// });
 
 udpServer.on('error', (err) => {
     console.log(`udpServer error:\n${err.stack}`);
