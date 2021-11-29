@@ -5,6 +5,8 @@ import dgram from 'dgram';
 import mongoose from 'mongoose'
 import * as fs from 'fs';
 import express from 'express';
+import path from 'path';
+const __dirname = path.resolve()
 
 // Servers 8080 and 5300
 const webServer = express();
@@ -152,7 +154,8 @@ setInterval(() => {
     });
 }, 2500);
 
-webServer.use(express.static('build'))-
+webServer.use(express.static(path.join(__dirname + '/build')));
+
 webServer.listen(8080, () => console.log('WebServer listening on  0.0.0.0:8080'));
 
 webServer.on('error', (err) => {

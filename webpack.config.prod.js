@@ -3,6 +3,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const PACKAGE = require('./package.json');
+
 
 module.exports = {
     entry: './src/index.js',
@@ -82,6 +85,7 @@ module.exports = {
         },
     },
     plugins: [
+        new FaviconsWebpackPlugin('public/logo.svg'), // svg works too!
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: [
                 '**/*',
@@ -97,10 +101,9 @@ module.exports = {
             filename: 'css/[name].[hash:8].css',
         }),
         new HtmlWebpackPlugin({
-            title: 'threejs example',
+            title: PACKAGE.name,
             // filename: __dirname + '/build/index.html',
-            template: __dirname + '/public/index.html',
-            // favicon: __dirname + '/public/favicon.ico',
+            template: __dirname + '/public/index.html'
         }),
         // new CopyPlugin({
         //     patterns: [

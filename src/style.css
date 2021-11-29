@@ -1,0 +1,84 @@
+body {
+  color: #CCC;
+  font-size: 13px;
+
+  background-color: #333;
+  margin: 0px;
+  overflow: hidden;
+}
+
+#intro {
+  padding-top: 5em;
+  user-select: none;
+}
+#logo {
+  float: right;
+  width: 265px;
+}
+#logo h1 {
+  float: left;
+  font-family: sans-serif;
+  font-weight: 100;
+  font-size: 1em;
+}
+
+#logo img {
+  float: left;
+  height: 28px;
+  padding: 0.2em;
+}
+
+.dg.main .close-button {
+  background-color: #282828 !important;
+
+}
+
+#info {
+  color: #CCC;
+  position: absolute;
+  top: 1em;
+  padding: 5px;
+
+}
+
+#infoFooter {
+  color: #CCC;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  padding: 5px;
+}
+
+a {
+  color: #FAA;
+  text-decoration: none;
+}
+
+.noselect {
+  /*pointer-events: none;*/
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
+
+.logoCorner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 48px;
+  margin: 5px;
+}
+
+.logoCorner:hover {
+  filter: invert(100%);
+}

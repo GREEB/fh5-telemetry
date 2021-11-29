@@ -1,6 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const PACKAGE = require('./package.json');
 
 module.exports = {
     entry: './src/index.js',
@@ -90,11 +92,11 @@ module.exports = {
         // publicPath: 'http://localhost:3000/',
     },
     plugins: [
+        new FaviconsWebpackPlugin('public/logo.svg'), // svg works too!
         new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
-            title: 'Vark',
+            title: '@@DEV@@ ' + PACKAGE.name,
             template: __dirname + '/public/index.html',
-            // favicon: __dirname + '/public/favicon.ico',
         }),
     ],
 }

@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
 import Papa from 'papaparse'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import './style.css';
 
 let lastPointCount
 let camera, controls, scene, renderer;
@@ -43,10 +44,10 @@ function initDatGui() {
 	let element = document.querySelector('.dg div ul');
 	let p = document.createElement("p")
 
-	p.textContent = `Help Finish this pointMap of forza horizon 5\n
-					Just add the ip and port from below into your data out settings in FH5 and your done.
+	p.textContent = `Help Finish this pointMap \n
+					Just add the ip and port from below
 					`
-	p.setAttribute("style", "font-size:1.5em;text-align: left;");
+	p.setAttribute("id", "intro");
 	element.append(p)
 
 
@@ -72,6 +73,7 @@ function initDatGui() {
 				addParticles(1)
 			}
 		})
+		gui.close();
 
 }
 
@@ -157,7 +159,6 @@ function animate() {
 
 
 function addParticles(colorsel) {
-	console.log('addpar with col: ' + colorsel);
 	let nbParticles = nonLinearPoints.length;
 	lastPointCount = nonLinearPoints.length
 	geometry = new THREE.BufferGeometry();
