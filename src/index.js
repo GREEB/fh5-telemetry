@@ -222,8 +222,7 @@ setInterval(() => {
 	fetch('pos.txt') // fetch text file
 		.then((resp) => resp.text())
 		.then(data => {
-			// Flip numbers for map
-
+			mainContainer.remove(box)
 
 			if (oldcount == 0) {
 				oldcount = data.split('\n').length

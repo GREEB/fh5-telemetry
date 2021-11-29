@@ -197,6 +197,8 @@ udpServer.on('message', (msg) => {
 
 
 // FIXME: Delete this add redis cache to udpServer
+// FIXME: Quick fix need to fixall
+
 let lastWrite = 0
 setInterval(() => {
     pos.find({}, function (err, result) {
