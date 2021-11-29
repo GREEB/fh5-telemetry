@@ -4,6 +4,7 @@ import Papa from 'papaparse'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import './style.css';
 
+
 let lastPointCount
 let camera, controls, scene, renderer;
 
@@ -42,8 +43,8 @@ function initDatGui() {
 		boxVisible: false
 	};
 	let element = document.querySelector('.dg div ul');
-	let p = document.createElement("p")
 
+	let p = document.createElement("p")
 	p.textContent = `Help Finish this pointMap \n
 					Just add the ip and port from below
 					`

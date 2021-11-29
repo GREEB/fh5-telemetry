@@ -11,7 +11,7 @@ module.exports = {
     entry: './src/index.js',
     mode: 'production',
     output: {
-        filename: 'js/[name].[hash:8].js',
+        filename: 'js/[name].[contenthash:8].js',
         path: path.resolve(__dirname, 'build'),
         publicPath: './',
     },
@@ -33,7 +33,7 @@ module.exports = {
                         options: {
                             modules: {
                                 localIdentName:
-                                    '[hash:base64:8]_[name]_[local]',
+                                    '[contenthash:base64:8]_[name]_[local]',
                             },
                         },
                     },
@@ -55,7 +55,7 @@ module.exports = {
                         loader: 'url-loader',
                         options: {
                             limit: 8192,
-                            name: 'assets/[name].[hash:8].[ext]',
+                            name: 'assets/[name].[contenthash:8].[ext]',
                         },
                     },
                 ],
@@ -85,7 +85,7 @@ module.exports = {
         },
     },
     plugins: [
-        new FaviconsWebpackPlugin('public/logo.svg'), // svg works too!
+        new FaviconsWebpackPlugin('src/logo.svg'), // svg works too!
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: [
                 '**/*',
@@ -98,22 +98,17 @@ module.exports = {
             ],
         }),
         new MiniCssExtractPlugin({
-            filename: 'css/[name].[hash:8].css',
+            filename: 'css/[name].[contenthash:8].css',
         }),
         new HtmlWebpackPlugin({
             title: PACKAGE.name,
-            // filename: __dirname + '/build/index.html',
+            filename: __dirname + '/build/index.html',
             template: __dirname + '/public/index.html'
         }),
-        // new CopyPlugin({
-        //     patterns: [
-        //         {
-        //             from: 'public/',
-        //             // globOptions: {
-        //             //     ignore: ['**/pointcloud/**', '**/libs/**'],
-        //             // },
-        //         },
-        //     ],
-        // }),
+        new CopyPlugin({
+            patterns: [
+                { from: "src/*.svg",    to: 'assets/[name].svg'},
+            ],
+          }),
     ],
 }

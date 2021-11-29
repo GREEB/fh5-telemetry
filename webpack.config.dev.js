@@ -2,7 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
-const PACKAGE = require('./package.json');
+var PACKAGE = require('./package.json');
 
 module.exports = {
     entry: './src/index.js',
@@ -32,7 +32,7 @@ module.exports = {
                         options: {
                             modules: {
                                 localIdentName:
-                                    '[hash:base64:8]_[name]_[local]',
+                                    '[contenthash:base64:8]_[name]_[local]',
                             },
                         },
                     },
@@ -92,7 +92,7 @@ module.exports = {
         // publicPath: 'http://localhost:3000/',
     },
     plugins: [
-        new FaviconsWebpackPlugin('public/logo.svg'), // svg works too!
+        new FaviconsWebpackPlugin('src/logo.svg'), // svg works too!
         new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             title: '@@DEV@@ ' + PACKAGE.name,
