@@ -166,7 +166,7 @@ setInterval(() => {
 if (process.env.PROD){
     const httpsServer = https.createServer({
         key: fs.readFileSync('/etc/letsencrypt/live/' + process.env.URL + '/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/' + process.env.URL + 'fullchain.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/' + process.env.URL + '/fullchain.pem'),
       }, webServer);
       httpsServer.listen(99443, () => {
           console.log('HTTPS Server running on port 99443');
