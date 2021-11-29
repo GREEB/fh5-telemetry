@@ -1,5 +1,6 @@
 {
   "name": "fh5-telemetry",
+  "type": "module",
   "version": "1.0.0",
   "description": "Save forza horizon 5 xyz and more to display on a pointcloud",
   "main": "index.js",
@@ -40,6 +41,6 @@
     "notyf": "^3.10.0",
     "papaparse": "^5.3.1",
     "three": "^0.128.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
   }
 }
