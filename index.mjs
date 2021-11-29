@@ -3,91 +3,67 @@ dotenv.config()
 import throttle from 'lodash.throttle'
 import dgram from 'dgram';
 import mongoose from 'mongoose'
-import logUpdate from 'log-update';
 import * as fs from 'fs';
+import express from 'express';
 
-const server = dgram.createSocket('udp4');
+// Servers 8080 and 5300
+const webServer = express();
+const udpServer = dgram.createSocket('udp4');
 
 // Mongodb Stuff
-
 mongoose.connect(process.env.MONGOURL);
 const posSchema = new mongoose.Schema({ x: 'number', y: 'number', z: 'number', surface: 'number' }); // 0=asphalt 1=dirt 2=water
 const pos = mongoose.model('Position', posSchema);
 posSchema.index({ x: 1, y: 1, z: 1 }, { unique: true });
-const infoSchema = new mongoose.Schema({count: 'number', minX: 'number', maxX: 'number', minY: 'number', maxY: 'number', minY: 'number', maxZ: 'number', minZ: 'number'})
+const infoSchema = new mongoose.Schema({ count: 'number', minX: 'number', maxX: 'number', minY: 'number', maxY: 'number', minY: 'number', maxZ: 'number', minZ: 'number' })
 const map = mongoose.model('Map', infoSchema);
 
-let lastsavedpos = 0
-let lastpos = 0
+let lastSavedPos = 0
 let maP = { points: 0, x: {}, y: {}, z: {} }
 
 async function getInitInfo() {
-
-    // Look if we have a map
+    // Look if we have any points
     const count = await pos.count().exec(); map.points = count
+    if (count === 0) { return; }
 
-    if (count === 0) {
-        return;
-    }
-
+    // If we do have points find MIN MAX
     const minX = await pos.find({}).sort({ x: 1 }).limit(1).exec(); maP.x.min = minX[0].x
     const maxX = await pos.find({}).sort({ x: -1 }).limit(1).exec(); maP.x.max = maxX[0].x
     const minY = await pos.find({}).sort({ y: 1 }).limit(1).exec(); maP.y.min = minY[0].y
     const maxY = await pos.find({}).sort({ y: -1 }).limit(1).exec(); maP.y.max = maxY[0].y
     const minZ = await pos.find({}).sort({ z: 1 }).limit(1).exec(); maP.z.min = minZ[0].z
     const maxZ = await pos.find({}).sort({ z: -1 }).limit(1).exec(); maP.z.max = maxZ[0].z
-    const mapCount = await map.count().exec()
-    if (mapCount == 0){
-        const newmap = new map({
-            count: count,
-            minX: maP.x.min,
-            maxX: maP.x.max,
-            minY: maP.y.min,
-            maxY: maP.y.max,
-            minZ: maP.z.min,
-            maxZ: maP.z.max
-        })
-        newmap.save(function (err) {
-            if (err) console.log(err);
-        });
-    
-    }else{
-        const mapUpdate = await map.findOne();
 
-        // Delete the document so Mongoose won't be able to save changes
-        
-        mapUpdate.minX = maP.x.min
-        mapUpdate.maxX = maP.x.max
-        mapUpdate.minY = maP.y.min
-        mapUpdate.maxY = maP.y.max
-        mapUpdate.minZ = maP.z.min
-        mapUpdate.maxZ = maP.z.max
+    // Look if we have a map
+    const mapCount = await map.count().exec()
+
+    // If no Map create and save one
+    if (mapCount == 0) {
+        const newMap = new map({ count: count, minX: maP.x.min, maxX: maP.x.max, minY: maP.y.min, maxY: maP.y.max, minZ: maP.z.min, maxZ: maP.z.max })
+        newMap.save(function (err) { if (err) console.log(err); }); // FIXME: Throws errors on duplicates.
+    } else {
+        // If we have a map update it
+        const mapUpdate = await map.findOne();
+        mapUpdate.minX = maP.x.min; mapUpdate.maxX = maP.x.max; mapUpdate.minY = maP.y.min; mapUpdate.maxY = maP.y.max; mapUpdate.minZ = maP.z.min; mapUpdate.maxZ = maP.z.max;
         await mapUpdate.save();
     }
-
 }
 
 getInitInfo();
 
-
 // TODO: log by moving speed or distnace
-const throttledwrite = throttle(function (x, y, z, surface, flying) {
-    if (flying === 0) { return }
-    if (x == 0 && y == 0 && z == 0){ return }
-    if (lastpos === x + y + z) {
-        logUpdate(`Last pos was same, stop logging`)
-    } else {
-        lastpos = x + y + z
-        const newpos = new pos({ x: x, y: y, z: z, surface: surface });
-        newpos.save(function (err) {
-            if (err) console.log('duplicate dont send');
-            lastsavedpos = `New Position saved x:${x} y:${y} z:${z} surface: ${surface}`
+const throttledWrite = throttle(function (x, y, z, surface, flying) {
+    if (flying === 0) return // Abort if flying
+    if (x == 0 && y == 0 && z == 0) return // Abort if 000 chord
+    const newPos = new pos({ x: x, y: y, z: z, surface: surface });
+    newPos.save(function (err) {
+        if (err) console.log('duplicate dont send');
+        lastSavedPos = `New Position saved x:${x} y:${y} z:${z} surface: ${surface}`
 
-        });
-    }
+    });
 }, 500);
 
-server.on('message', (msg) => {
+udpServer.on('message', (msg) => {
     let flying = 1;
     let surface = 0
     // Road edgde detection build in?  WheelOnRumbleStripFl(this byte[] bytes) { return GetSingle(bytes, 116)
@@ -131,16 +107,16 @@ server.on('message', (msg) => {
         surface = 0
     }
 
-    throttledwrite(x, y, z, surface, flying)
+    throttledWrite(x, y, z, surface, flying)
 
-    // logUpdate(`
+    // console.log(`
     // Data xyz/FL,FR,BL,BR
 
     // Surface: ${surface}
     // Posistion: ${x} ${y} ${z}
     // WheelsOnGround: ${nstFL} ${nstFR} ${nstRL} ${nstRR}
     // WheelsOndirt: ${srFL} ${srFR} ${srRL} ${srRR}
-    // Lastsavedpos: ${lastsavedpos}
+    // lastSavedPos: ${lastSavedPos}
 
     // Flying: ${flying}
 
@@ -149,12 +125,12 @@ server.on('message', (msg) => {
 });
 
 
-    // FIXME: Delete this add redis cache to server
-let lastwrite = 0
+// FIXME: Delete this add redis cache to udpServer
+let lastWrite = 0
 setInterval(() => {
-    pos.find({}, function(err, result) {
+    pos.find({}, function (err, result) {
         if (err) {
-          console.log(err);
+            console.log(err);
         } else {
             let list = ``
             let count = 0
@@ -162,29 +138,36 @@ setInterval(() => {
                 count++
                 list += `${e.x} ${e.y} ${e.z} ${e.surface}\n`
             });
-            if (count === lastwrite){
-                logUpdate('nothing changed');
+            if (count === lastWrite) {
+                console.log('nothing changed');
                 return;
             }
-            fs.writeFile('./public/pos.txt', list, (err) => {
+            fs.writeFile('./build/pos.txt', list, (err) => {
                 if (err) throw err;
-                logUpdate('Pos saved!: ' + count);
-                lastwrite = count
+                console.log('Pos saved!: ' + count);
+                lastWrite = count
                 count = 0
             });
         }
-      });
+    });
 }, 2500);
 
+webServer.use(express.static('build'))-
+webServer.listen(8080, () => console.log('WebServer listening on  0.0.0.0:8080'));
 
-server.on('error', (err) => {
-    logUpdate(`server error:\n${err.stack}`);
-    server.close();
+webServer.on('error', (err) => {
+    console.log(`webServer error:\n${err.stack}`);
+    webServer.close();
 });
 
-server.on('listening', () => {
-    const address = server.address();
-    logUpdate(`server listening ${address.address}:${address.port}`);
+udpServer.on('error', (err) => {
+    console.log(`udpServer error:\n${err.stack}`);
+    udpServer.close();
 });
 
-server.bind(5300);
+udpServer.on('listening', () => {
+    const address = udpServer.address();
+    console.log(`udpServer listening ${address.address}:${address.port}`);
+});
+
+udpServer.bind(5300);
