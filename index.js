@@ -214,7 +214,7 @@ setInterval(() => {
             }
             fs.writeFile(path.join(__dirname + '/build') + "/pos.txt", list, (err) => {
                 if (err) throw err;
-                console.log('Pos saved!: ' + count);
+                console.log(`${count} new positions saved`);
                 lastWrite = count
                 count = 0
             });
